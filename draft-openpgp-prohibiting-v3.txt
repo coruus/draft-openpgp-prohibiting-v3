@@ -1,0 +1,336 @@
+
+
+
+
+Internet Engineering Task Force                                   D. Gil
+Internet-Draft                                                       ---
+Updates: 4880,6637 (if approved)                              D. Gillmor
+Intended status: Standards Track                                    ACLU
+Expires: April 22, 2015                                 October 19, 2014
+
+
+                         Prohibiting OpenPGP V3
+                      draft-openpgp-prohibiting-v3
+
+Abstract
+
+   This document requires that OpenPGP implementations only generate and
+   accept V4 OpenPGP key packets and MDC-protected encrypted data
+   packets.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on April 22, 2015.
+
+Copyright Notice
+
+   Copyright (c) 2014 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 1]
+
+Internet-Draft           Prohibiting OpenPGP V3             October 2014
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  V3 keys . . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.2.  Modification detection codes  . . . . . . . . . . . . . .   3
+     1.3.  Private key modification attacks  . . . . . . . . . . . .   3
+   2.  Requirements Language . . . . . . . . . . . . . . . . . . . .   3
+   3.  Changes to OpenPGP  . . . . . . . . . . . . . . . . . . . . .   3
+   4.  Limited exceptions  . . . . . . . . . . . . . . . . . . . . .   4
+     4.1.  Decrypting existing files . . . . . . . . . . . . . . . .   4
+   5.  Implementation notes  . . . . . . . . . . . . . . . . . . . .   4
+     5.1.  Calculating MDCs and verifying prefix correctness . . . .   4
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   5
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   OpenPGP, as defined by [RFC4880] permits the use of unsafe packet
+   types for compatibility with legacy implementations.  This document
+   requires that OpenPGP implementations immediately stop supporting
+   these packet types.
+
+1.1.  V3 keys
+
+   The version 3 public/private key format specified by [RFC2440] has a
+   number of weaknesses.  In particular:
+
+   o  keyids are derived as the low-order bits of the public RSA
+      modulus;
+
+   o  fingerprints are calculated as the MD5(modulus || exponent).
+
+   As a result, version 3 keyids and fingerprints are trivially
+   spoofable.  Details of these attacks are summarized in TODO.
+
+   In addition, version 3 keyids and version 4 keyids are both 64 bits.
+   Both V3 and V4 keyids are usually formatted and handled by
+   implementations in the same way as version 4 keyids.  This means that
+   users of OpenPGP implementations cannot assure that they are using a
+   version 4 keyid (which is modestly costly to forge) or a version 3
+   keyid (which is trivial to forge).
+
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 2]
+
+Internet-Draft           Prohibiting OpenPGP V3             October 2014
+
+
+   The continued use of version 3 keys thus represents a security risk
+   to all users of OpenPGP software.
+
+1.2.  Modification detection codes
+
+   [RFC4880] specified tag 18 and 19 symmetrically-encrypted, integrity-
+   protected data packets and message modification codes.  The MDC
+   provides some protection against message modification attacks.
+   Attacks against non-integrity-protected packets have been
+   demonstrated that reduce the security of OpenPGP implementations to
+   under 2^16 bits.  See [jallad], [mister], [lin], and [klima].  (TODO:
+   encrux already done?)
+
+   OpenPGP implementations have supported MDCs for over 10 years.
+   [pgp81relnote] [gnupg106relnote] [mccune].  [RFC6637] already
+   requires the use of MDCs with message compositions including an ECDH
+   (tag ??) packet.
+
+1.3.  Private key modification attacks
+
+   [lin], and [klima].
+
+2.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+3.  Changes to OpenPGP
+
+   Because of the deficiencies noted in Section 1:
+
+   1.  OpenPGP implementations MUST NOT import V3 key packets.
+
+   2.  OpenPGP implementations MUST NOT verify signatures made using a
+       V3 key.
+
+   3.  OpenPGP implementations MUST NOT generate or decrypt (Tag 9)
+       unauthenticated encrypted data packets.  They MUST use Tag 18
+       packets with MDCs.  If the stated preferences of the recipient
+       conflict, they MUST disregard the recipient"s preferences.
+
+   4.  OpenPGP implementations MUST use ONLY the secret-key S2K usage
+       octet 254, as described in [RFC4880] section 5.5.3.
+
+   [RFC4880] and [RFC6637] list the packet types defined for OpenPGP
+
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 3]
+
+Internet-Draft           Prohibiting OpenPGP V3             October 2014
+
+
+4.  Limited exceptions
+
+4.1.  Decrypting existing files
+
+   Notwithstanding the requirements of this document, an implementation
+   MAY provide the option to decrypt existing data encrypted under a V3
+   key or using a tag 9 packet.  These options MUST be separate; that
+   is, enabling support for V3 keys SHALL NOT imply that support for tag
+   9 packets is enabled, or vice versa.
+
+   It MUST, however, disable this option by default.  It MUST require
+   explicit user permission in order to so; it MUST NOT provide any
+   perdurable configuration option to enable such support.
+
+   In addition, an implementation MAY support converting an existing V3
+   secret key into a V4 public key; if it does, it SHOULD offer to do so
+   when the key material is stored in a way (e.g., on a smartcard) that
+   prevents a new key from being generated.
+
+5.  Implementation notes
+
+5.1.  Calculating MDCs and verifying prefix correctness
+
+   Implementations MUST NOT implement the "quick-check" comparison of
+   the two repeated prefix bytes described in [RFC4880].
+
+   Implementations SHOULD, however, check that the repeated prefix bytes
+   are correct in the following way:
+
+   1.  Decrypt the message, preserving (but not checking) the prefix
+       bytes.
+
+   2.  Calculate the MDC as described in section 5.13 of [RFC4880]
+
+   3.  Concatenate the message"s MDC with the decrypted message bytes
+       M[16:18].
+
+   4.  Concatenate the calculated MDC with the decrypted message bytes
+       M[14:16].
+
+   5.  In constant-time, with respect to the number of differing bits
+       between the purported and calculcated tags, compare the two MDCs.
+
+   6.  If any bits differ, report an error.  The error message MUST NOT
+       indicate the position or (or total number) of the bit
+       differences.
+
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 4]
+
+Internet-Draft           Prohibiting OpenPGP V3             October 2014
+
+
+   This provides up to an additional 16 bits of message-integrity
+   protection against some types of attack. [cite to Rogaway KW paper?]
+
+6.  Acknowledgements
+
+   TBD
+
+7.  IANA Considerations
+
+   This memo includes no request to IANA.
+
+8.  Security Considerations
+
+   This document enhances the security guarantees of OpenPGP by
+   preventing downgrade and crossgrade attacks.
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC4880]  Callas, J., Donnerhacke, L., Finney, H., Shaw, D., and R.
+              Thayer, "OpenPGP Message Format", RFC 4880, November 2007.
+
+   [RFC6637]  Jivsov, A., "Elliptic Curve Cryptography (ECC) in
+              OpenPGP", RFC 6637, June 2012.
+
+9.2.  Informative References
+
+   [EncryptThenAuth]
+              Krawczyk, H., "The order of encryption and authentication
+              for protecting communications (or: how secure is SSL?)",
+              Springer-Verlag LNCS 2139, August 2001.
+
+   [GC]       Bellare, M. and C. Namprempre, "Authenticated Encryption:
+              Relations among notions and analysis of the generic
+              composition paradigm", Springer-Verlag LNCS 1976, December
+              2000.
+
+   [RFC2440]  Callas, J., Donnerhacke, L., Finney, H., and R. Thayer,
+              "OpenPGP Message Format", RFC 2440, November 1998.
+
+   [SCH]      Schneier, B., "Applied Cryptography: Protocols,
+              Algorithms, and Source Code in C, 2nd ed.", 1996.
+
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 5]
+
+Internet-Draft           Prohibiting OpenPGP V3             October 2014
+
+
+   [jallad]   Jallad, , Kahil, , Katz, J., and B. Schneier,
+              "Implementation of chosen-ciphertext attacks against PGP
+              and GnuPG. Information Security 90-101", 2002,
+              <doi:10.1007/3-540-45811-5_7>.
+
+   [mister]   Mister, S. and R. Zuccherato, "An attack on CFB mode
+              encryption as used by OpenPGP. Selected Areas in
+              Cryptography 82-94", 2006.
+
+Authors' Addresses
+
+   David Leon Gil
+   ---
+
+   Email: coruus@gmail.com
+
+
+   Daniel Kahn Gillmor
+   ACLU
+   125 Broad Street, 18th Floor
+   New York, NY  10004
+   USA
+
+   Email: dkg@fifthhorseman.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gil & Gillmor            Expires April 22, 2015                 [Page 6]

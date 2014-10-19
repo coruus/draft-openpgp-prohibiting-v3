@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+     There has to be one entity for each item to be referenced. 
+     An alternate method (rfc include) is described in the references. -->
+
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2440 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2440.xml">
+<!ENTITY RFC4880 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4880.xml">
+<!ENTITY RFC6637 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6637.xml">
+]>
+<?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="std" docName="draft-openpgp-prohibiting-v3" ipr="trust200902" 
+  updates="4880,6637">
+<!-- category values: std, bcp, info, exp, and historic
+     ipr values: full3667, noModification3667, noDerivatives3667
+     you can add the attributes updates="NNNN" and obsoletes="NNNN" 
+     they will automatically be output with "(if approved)" -->
+<!-- ***** FRONT MATTER ***** -->
+ <front>
+<!-- The abbreviated title is used in the page header - it is only necessary if the 
+         full title is longer than 39 characters -->
+  <title>Prohibiting OpenPGP V3</title>
+<!-- add "role="editor"" below for the editors if appropriate -->
+<!-- Another author who claims to be an editor -->
+  <author fullname="David Leon Gil" initials="D.L."
+            surname="Gil">
+   <organization>---</organization>
+   <address>
+<!--
+        <postal>
+          <street></street>
+
+          <city></city>
+
+          <region>CA</region>
+
+          <code></code>
+
+          <country>USA</country>
+        </postal>
+        -->
+    <email>coruus@gmail.com</email>
+<!-- uri and facsimile elements may also be added -->
+   </address>
+  </author>
+  <author fullname="Daniel Kahn Gillmor" initials="D." surname="Gillmor">
+   <organization>ACLU</organization>
+   <address>
+    <postal>
+     <street>125 Broad Street, 18th Floor</street>
+     <city>New York</city>
+     <region>NY</region>
+     <code>10004</code>
+     <country>USA</country>
+    </postal>
+    <phone></phone>
+    <email>dkg@fifthhorseman.net</email>
+<!-- uri and facsimile elements may also be added -->
+   </address>
+  </author>
+  <date year="2014"  />
+<!-- If the month and year are both specified and are the current ones, xml2rfc will fill 
+         in the current day for you. If only the current year is specified, xml2rfc will fill 
+	 in the current day and month for you. If the year is not the current one, it is 
+	 necessary to specify at least a month (xml2rfc assumes day="1" if not specified for the 
+	 purpose of calculating the expiry date).  With drafts it is normally sufficient to 
+	 specify just the year. -->
+<!-- Meta-data Declarations -->
+  <area>General</area>
+  <workgroup>Internet Engineering Task Force</workgroup>
+<!-- WG name at the upperleft corner of the doc,
+         IETF is fine for individual submissions.  
+	 If this element is not present, the default is "Network Working Group",
+         which is used by the RFC Editor as a nod to the history of the IETF. -->
+  <keyword>draft</keyword>
+  <keyword>openpgp</keyword>
+<!-- Keywords will be incorporated into HTML output
+         files in a meta tag but they have no effect on text or nroff
+         output. If you submit your draft to the RFC Editor, the
+         keywords will be used for the search engine. -->
+  <abstract>
+   <t>This document requires that OpenPGP implementations only generate and accept
+        V4 OpenPGP key packets and MDC-protected encrypted data packets.</t>
+  </abstract>
+ </front>
+ <middle>
+  <section anchor="Introduction" title="Introduction">
+   <t>OpenPGP, as defined by <xref target="RFC4880" /> permits the use of unsafe 
+         packet types for compatibility with legacy implementations. This document
+         requires that OpenPGP implementations immediately stop supporting these
+         packet types.
+       </t>
+   <section anchor="v3keys" title="V3 keys">
+    <t>The version 3 public/private key format specified by <xref target="RFC2440" />
+          has a number of weaknesses. In particular:</t>
+    <t>
+     <list style="symbols">
+      <t>keyids are derived as the low-order bits of the public RSA modulus;</t>
+      <t>fingerprints are calculated as the MD5(modulus || exponent).</t>
+     </list>
+    </t>
+    <t>As a result, version 3 keyids and fingerprints are trivially spoofable.
+      Details of these attacks are summarized in TODO.
+   </t>
+    <t>In addition, version 3 keyids and version 4 keyids are both 64 bits. Both
+      V3 and V4 keyids are usually formatted and handled by implementations in the
+      same way as version 4 keyids. This means that users of OpenPGP implementations
+      cannot assure that they are using a version 4 keyid (which is modestly costly
+      to forge) or a version 3 keyid (which is trivial to forge).</t>
+    <t>The continued use of version 3 keys thus represents a security risk to all
+      users of OpenPGP software.
+   </t>
+   </section>
+   <section anchor="mdc" title="Modification detection codes">
+    <t>
+     <xref target="RFC4880" /> specified tag 18 and 19 symmetrically-encrypted,
+     integrity-protected data packets and message modification codes. The MDC
+     provides some protection against message modification attacks. Attacks against
+     non-integrity-protected packets have been demonstrated that reduce the security
+     of OpenPGP implementations to under 2^16 bits. See <xref target="jallad" />, 
+     <xref target="mister" />, [lin], and [klima].
+     (TODO: encrux already done?)
+   </t>
+    <t>
+     OpenPGP implementations have supported MDCs for over 10 years. [pgp81relnote]
+     [gnupg106relnote] [mccune]. <xref target="RFC6637" /> already requires the
+     use of MDCs with message compositions including an ECDH (tag ??) packet.
+   </t>
+   </section>
+   <section anchor="priv" title="Private key modification attacks">
+    <t>
+     [lin], and [klima].
+   </t>
+   </section>
+  </section>
+  <section title="Requirements Language">
+   <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in <xref target="RFC2119" />.</t>
+  </section>
+  <section title="Changes to OpenPGP">
+   <t>Because of the deficiencies noted in <xref target="Introduction" />:</t>
+   <t>
+    <list style="numbers">
+     <t>OpenPGP implementations MUST NOT import V3 key packets.</t>
+     <t>OpenPGP implementations MUST NOT verify signatures made using a V3 key.</t>
+     <t>OpenPGP implementations MUST NOT generate or decrypt (Tag 9) unauthenticated
+       encrypted data packets. They MUST use Tag 18 packets with MDCs. If the stated
+       preferences of the recipient conflict, they MUST disregard the recipient"s
+       preferences.</t>
+     <t>OpenPGP implementations MUST use ONLY the secret-key S2K usage octet 254,
+        as described in <xref target="RFC4880" /> section 5.5.3.</t>
+    </list>
+   </t>
+   <t>
+    <xref target="RFC4880" /> and <xref target="RFC6637" /> list the packet types defined for OpenPGP 
+     </t>
+  </section>
+  <section title="Limited exceptions">
+   <section title="Decrypting existing files">
+    <t>Notwithstanding the requirements of this document, an implementation
+         MAY provide the option to decrypt existing data encrypted under a V3
+         key or using a tag 9 packet. These options MUST be separate; that is, enabling
+         support for V3 keys SHALL NOT imply that support for tag 9 packets is
+         enabled, or vice versa.
+       </t>
+    <t>It MUST, however, disable this option by default. It MUST require explicit
+         user permission in order to so; it MUST NOT provide any perdurable 
+         configuration option to enable such support.
+       </t>
+    <t>In addition, an implementation MAY support converting an existing V3
+         secret key into a V4 public key; if it does, it SHOULD offer to do so
+         when the key material is stored in a way (e.g., on a smartcard) that 
+         prevents a new key from being generated.</t>
+   </section>
+  </section>
+  <section title="Implementation notes">
+   <section title="Calculating MDCs and verifying prefix correctness">
+    <t>Implementations MUST NOT implement the "quick-check" comparison of the two
+      repeated prefix bytes described in <xref target="RFC4880" />.
+    </t>
+    <t>Implementations SHOULD, however, check that the repeated prefix bytes are
+      correct in the following way:
+    </t>
+    <t>
+     <list style="numbers">
+      <t>Decrypt the message, preserving (but not checking) the prefix bytes.</t>
+      <t>Calculate the MDC as described in section 5.13 of <xref target="RFC4880" />
+      </t>
+      <t>Concatenate the message"s MDC with the decrypted message bytes M[16:18].</t>
+      <t>Concatenate the calculated MDC with the decrypted message bytes M[14:16].</t>
+      <t>In constant-time, with respect to the number of differing bits between the
+        purported and calculcated tags, compare the two MDCs.</t>
+      <t>If any bits differ, report an error. The error message MUST NOT indicate
+         the position or (or total number) of the bit differences.</t>
+     </list>
+    </t>
+    <t>This provides up to an additional 16 bits of message-integrity protection
+      against some types of attack. [cite to Rogaway KW paper?]
+    </t>
+   </section>
+  </section>
+  <section anchor="Acknowledgements" title="Acknowledgements">
+   <t>TBD</t>
+  </section>
+<!-- Possibly a "Contributors" section ... -->
+  <section anchor="IANA" title="IANA Considerations">
+   <t>This memo includes no request to IANA.</t>
+  </section>
+  <section anchor="Security" title="Security Considerations">
+   <t>This document enhances the security guarantees of OpenPGP by preventing
+        downgrade and crossgrade attacks.
+      </t>
+  </section>
+ </middle>
+<!--  *****BACK MATTER ***** -->
+ <back>
+<!-- References split into informative and normative -->
+<!-- There are 2 ways to insert reference entries from the citation libraries:
+     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
+     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
+        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+
+     Both are cited textually in the same manner: by using xref elements.
+     If you use the PI option, xml2rfc will, by default, try to find included files in the same
+     directory as the including file. You can also define the XML_LIBRARY environment variable
+     with a value containing a set of directories to search.  These can be either in the local
+     filing system or remote ones accessed by http (http://domain/dir/... ).-->
+  <references title="Normative References">
+<!--?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.4880.xml"?-->
+      &RFC2119;
+      &RFC4880;
+      &RFC6637;
+
+    </references>
+  <references title="Informative References">
+<!-- Here we use entities that we defined at the beginning. -->
+      &RFC2440;
+   <reference anchor="jallad" target="doi:10.1007/3-540-45811-5_7">
+    <front>
+     <title>Implementation of chosen-ciphertext attacks against PGP and GnuPG. Information Security 90-101</title>
+     <author initials="" surname="Jallad">
+      <organization></organization>
+     </author>
+     <author initials="" surname="Kahil">
+      <organization></organization>
+     </author>
+     <author initials="J." surname="Katz">
+      <organization></organization>
+     </author>
+     <author initials="B." surname="Schneier">
+      <organization></organization>
+     </author>
+<!--http://cgis.cs.umd.edu/~jkatz/papers/pgp-attack.pdf-->
+     <date year="2002" />
+    </front>
+   </reference>
+   <reference anchor="mister" target="">
+    <front>
+     <title>An attack on CFB mode encryption as used by OpenPGP. Selected Areas in Cryptography 82-94</title>
+     <author initials="S." surname="Mister">
+      <organization></organization>
+     </author>
+     <author initials="R." surname="Zuccherato">
+      <organization></organization>
+     </author>
+     <date year="2006" />
+    </front>
+   </reference>
+   <reference anchor="SCH">
+    <front>
+     <title>Applied Cryptography: Protocols, Algorithms, and Source Code in C, 2nd ed.</title>
+     <author initials="B." surname="Schneier">
+      <organization></organization>
+     </author>
+     <date year="1996" />
+    </front>
+   </reference>
+   <reference anchor="GC">
+<!-- No-one seems to know how to reference publications like
+             conference proceedings in RFC-XML, this is one attempt... -->
+    <front>
+     <title>Authenticated Encryption: Relations among notions and analysis of the generic composition paradigm
+</title>
+     <author fullname="Mihir Bellare" initials="M" surname="Bellare">
+      <organization>UCSD</organization>
+     </author>
+     <author fullname="Chanathip Namprempre" initials="C" surname="Namprempre">
+      <organization>Thammasat University</organization>
+     </author>
+     <date year="2000" month="December" />
+<!--      <note>Proceedings of AsiaCrypt"00, Springer-Verlag LNCS No.1976, p.531</note> -->
+    </front>
+    <seriesInfo name="Springer-Verlag LNCS" value="1976" />
+   </reference>
+   <reference anchor="EncryptThenAuth">
+    <front>
+     <title>The order of encryption and authentication for protecting communications (or: how secure is SSL?)</title>
+     <author fullname="Hugo Krawczyk" initials="H" surname="Krawczyk">
+      <organization abbrev="IBM">IBM Research</organization>
+     </author>
+     <date year="2001" month="August" />
+<!--      <note>Proceedings of Crypto"01, Springer-Verlag LNCS No.2139, p.310</note> -->
+    </front>
+    <seriesInfo name="Springer-Verlag LNCS" value="2139" />
+   </reference>
+  </references>
+<!-- Change Log
+
+v00 2014-10-15  DLG  Initial version> -->
+ </back>
+</rfc>

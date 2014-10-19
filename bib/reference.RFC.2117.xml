@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2117'>
+
+<front>
+<title abbrev='PIM-SM'>Protocol Independent Multicast-Sparse Mode (PIM-SM): Protocol Specification</title>
+<author initials='D.' surname='Estrin' fullname='Deborah Estrin'>
+<organization>University of Southern Calif., Los Angeles, Computer Science Dept/ISI</organization>
+<address>
+<postal>
+<street />
+<city>Los Angeles</city>
+<region>CA</region>
+<code>90089</code>
+<country>US</country></postal>
+<email>estrin@usc.edu</email></address></author>
+<author initials='D.' surname='Farinacci' fullname='Dino Farinacci'>
+<organization>Cisco Systems Inc.</organization>
+<address>
+<postal>
+<street>170 West Tasman Drive</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95134</code>
+<country>US</country></postal>
+<email>dino@cisco.com</email></address></author>
+<author initials='A.' surname='Helmy' fullname='Ahmed Helmy'>
+<organization>University of Southern Calif., Los Angeles, CA , Computer Science Dept.</organization>
+<address>
+<postal>
+<street />
+<city>Los Angeles</city>
+<region>CA</region>
+<code>90089</code>
+<country>US</country></postal>
+<email>ahelmy@catarina.usc.edu</email></address></author>
+<author initials='D.' surname='Thaler' fullname='David Thaler'>
+<organization>University of Michigan,  EECS Department</organization>
+<address>
+<postal>
+<street />
+<city>Ann Arbor</city>
+<region>MI</region>
+<code>48109</code>
+<country>US</country></postal>
+<email>thalerd@eecs.umich.edu</email></address></author>
+<author initials='S.' surname='Deering' fullname='Stephen Deering'>
+<organization>Xerox PARC</organization>
+<address>
+<postal>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94304</code>
+<country>US</country></postal>
+<email>deering@parc.xerox.com</email></address></author>
+<author initials='M.' surname='Handley' fullname='Mark Handley'>
+<organization>University College London,  Department of Computer Science</organization>
+<address>
+<postal>
+<street>Gower Street</street>
+<city>London</city>
+<region>England</region>
+<code>WC1E 6BT</code>
+<country>UK</country></postal>
+<email>m.handley@cs.ucl.ac.uk</email></address></author>
+<author initials='V.' surname='Jacobson' fullname='Van Jacobson'>
+<organization>Lawrence Berkeley Laboratory</organization>
+<address>
+<postal>
+<street>1 Cyclotron Road</street>
+<city>Berkeley</city>
+<region>CA</region>
+<code>94720</code>
+<country>US</country></postal>
+<email>van@ee.lbl.gov</email></address></author>
+<author initials='C.' surname='Liu' fullname='Ching-gung  Liu'>
+<organization>University of Southern Calif., Los Angeles, Computer Science Dept.</organization>
+<address>
+<postal>
+<street />
+<city>Los Angeles</city>
+<region>CA</region>
+<code>90089</code>
+<country>US</country></postal>
+<email>charley@catarina.usc.edu</email></address></author>
+<author initials='P.' surname='Sharma' fullname='Puneet Sharma'>
+<organization>University of Southern Calif., Los Angeles, Computer Science Dept.</organization>
+<address>
+<postal>
+<street />
+<city>Los Angeles</city>
+<region>CA</region>
+<code>90089</code>
+<country>US</country></postal>
+<email>puneet@catarina.usc.edu</email></address></author>
+<author initials='L.' surname='Wei' fullname='Liming Wei'>
+<organization>Cisco Systems Inc.</organization>
+<address>
+<postal>
+<street>170 West Tasman Drive</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95134</code>
+<country>US</country></postal>
+<email>lwei@cisco.com</email></address></author>
+<date year='1997' month='June' />
+<abstract>
+<t></t></abstract></front>
+
+<seriesInfo name='RFC' value='2117' />
+<format type='TXT' octets='151886' target='http://www.rfc-editor.org/rfc/rfc2117.txt' />
+</reference>
